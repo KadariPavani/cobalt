@@ -1,0 +1,30 @@
+﻿name: DB Migrations
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install backend deps
+        run: |
+          cd backend
+          npm ci
+        env:
+          NODE_ENV: production
+      - name: Run migrations & seed
+        run: |
+          cd backend
+          npm run migrate
+          npm run seed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_SSL: 'true'
+          JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
