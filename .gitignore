@@ -44,3 +44,7 @@ coverage/
 # Misc
 *.pem
 .vercel
+.env.vercel
+
+# Claude Code local settings (contains command allowlist that may include secrets)
+.claude/settings.local.json

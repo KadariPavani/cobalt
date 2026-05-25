@@ -15,7 +15,9 @@ app.set('trust proxy', 1);
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    // If CLIENT_URL is set, restrict to that origin. Otherwise reflect the
+    // request's origin (useful when frontend and API share a domain on Vercel).
+    origin: process.env.CLIENT_URL || true,
     credentials: true,
   })
 );

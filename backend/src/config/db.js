@@ -2,14 +2,17 @@ const { Pool } = require('pg');
 
 const useUrl = Boolean(process.env.DATABASE_URL);
 
+// Auto-enable SSL when the connection string requires it (Neon, Supabase, etc.)
+const needsSsl =
+  useUrl &&
+  (process.env.DATABASE_SSL === 'true' ||
+    /sslmode=require|sslmode=verify/i.test(process.env.DATABASE_URL || ''));
+
 const pool = new Pool(
   useUrl
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl:
-          process.env.DATABASE_SSL === 'true'
-            ? { rejectUnauthorized: false }
-            : undefined,
+        ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
         max: 20,
         idleTimeoutMillis: 30_000,
       }
